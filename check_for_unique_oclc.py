@@ -19,11 +19,14 @@ with open(file_name) as csvfile:
       reader = csv.DictReader(csvfile)
       csv_writer = csv.writer(export_file, delimiter=',',quotechar='"', quoting=csv.QUOTE_MINIMAL)
       for row in reader:
-         i = 0
-         request_url = 'http://www.worldcat.org/webservices/catalog/content/libraries/' + row[oclc_number_header].strip() + '?location=' + zipcode + '&wskey=' + wskey
-         root = ET.fromstring(ur.urlopen(request_url).read())
-         holdings = root.findall('holding')
-         for holding in holdings:
-            i += 1
-         if i < threshold:
-           csv_writer.writerow([row[oclc_number_header], row['call_number'], row['title']])  
+         if ' ' not in row[oclc_number_header].strip():
+            print(row[oclc_number_header].strip())
+            i = 0
+            request_url = 'http://www.worldcat.org/webservices/catalog/content/libraries/' + row[oclc_number_header].strip() + '?location=' + zipcode + '&wskey=' + wskey
+            print(request_url)
+            root = ET.fromstring(ur.urlopen(request_url).read())
+            holdings = root.findall('holding')
+            for holding in holdings:
+               i += 1
+            if i < threshold:
+              csv_writer.writerow([row[oclc_number_header], row['call_number'], row['title']])  
